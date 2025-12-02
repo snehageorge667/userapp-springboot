@@ -2,6 +2,8 @@ package com.example.demo.service;
 
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,7 +13,10 @@ import java.util.Optional;
 @Service
 @Transactional
 public class UserServiceImpl implements UserService {
-
+    
+    private static final Logger log = 
+LoggerFactory.getLogger(UserServiceImpl.class);// <-- HERE
+    
     private final UserRepository repo;
 
     public UserServiceImpl(UserRepository repo) {
@@ -46,7 +51,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(Long id) {
-        repo.deleteById(id);
+public void deleteUser(Long id) {
+    User user = repo.findById(id)
+            .orElseThrow(() -> new RuntimeException("User not found with id " + id));
+
+    repo.delete(user);
     }
 }
